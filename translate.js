@@ -1,7 +1,19 @@
-const P = require('pokemon')
+import {getId, getName} from 'pokemon'
 
-function translatePokemon(engName, language='ko') {
-    return P.getName(P.getId(engName), language)
-}
+const P = {
+    pokemon : name => {
+        var id = 1;
+        var language = 'ko'
+        try {
+            id = getId(name);
+        } catch (e) {
+            try {
+                id = getId(name, 'ko')
+                language = 'en'
+            } catch (ee) { id = 1; }
+        }
+        return getName(id, language)
+    }
+};
 
-exports.translatePokemon = translatePokemon;
+export default P;

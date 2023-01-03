@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "@smogon/calc": "^0.7.0",
     "pokemon": "^2.3.3"
