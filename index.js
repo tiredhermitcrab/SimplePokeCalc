@@ -1,4 +1,4 @@
-import translate from './translate.js'
+import translate from './util/translate.js'
 import {calculate, Generations, Pokemon, Move, Field} from '@smogon/calc';
 
 
