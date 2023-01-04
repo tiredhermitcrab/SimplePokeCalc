@@ -1,6 +1,12 @@
 {
   "type": "module",
   "dependencies": {
-    "@smogon/calc": "^0.7.0"
+    "@smogon/calc": "^0.7.0",
+    "gh-pages": "^4.0.0"
+  },
+  "homepage": "https://tiredhermitcrab.github.io/SimplePokeCalc/",
+  "script": {
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d build"
   }
 }
