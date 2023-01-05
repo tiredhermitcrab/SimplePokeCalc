@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SimpleCalc</title>
+    </head>
+    <body>
+        <script src="calc/production.min.js"></script>
+        <script src="calc/data/production.min.js"></script>
+        <script type="module">
+            // import * from '/util/translate.js'
+            import * as T from 'file:///D:/TiredHermitCrab/MakeSomething/SimplePokeCalcaa/util/translate.js'
+            window.aaa = function() {
+                const gen = calc.Generations.get(9); 
+                const result = calc.calculate(
+                gen,
+                new calc.Pokemon(gen, window.T.pokemon(document.querySelector('#aaa').value), {
+                    item: 'Choice Specs',
+                    nature: 'Timid',
+                    evs: {spa: 252},
+                    boosts: {spa: 1},
+                }),
+                new calc.Pokemon(gen, 'Chansey', {
+                    item: 'Eviolite',
+                    nature: 'Calm',
+                    evs: {hp: 252, spd: 252},
+                }),
+                new calc.Move(gen, 'Focus Blast')
+                );
+
+                document.querySelector('#tt').innerHTML = result.fullDesc()
+            }
+        </script>
+        <input type="text" id="aaa" oninput="window.aaa()">
+        <div id="tt">
+
+        </div>
+    </body>
+</html>

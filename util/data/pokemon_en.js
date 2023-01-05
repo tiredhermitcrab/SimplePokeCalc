@@ -1,4 +1,4 @@
-[
+export default [
 	"Bulbasaur",
 	"Ivysaur",
 	"Venusaur",
