@@ -7,33 +7,7 @@
     <body>
         <script src="calc/production.min.js"></script>
         <script src="calc/data/production.min.js"></script>
-        <script type="module">
-            import T from '/util/translate.js'
-            Object.assign(window, window.calc)
-
-            window.aaa = function() {
-
-                const text = document.querySelector('#aaa').value
-                const gen = Generations.get(9); 
-                const result = calculate(
-                gen,
-                new Pokemon(gen, T.pokemon(text), {
-                    item: 'Choice Specs',
-                    nature: 'Timid',
-                    evs: {spa: 252},
-                    boosts: {spa: 1},
-                }),
-                new Pokemon(gen, 'Chansey', {
-                    item: 'Eviolite',
-                    nature: 'Calm',
-                    evs: {hp: 252, spd: 252},
-                }),
-                new Move(gen, 'Focus Blast')
-                );
-
-                document.querySelector('#tt').innerHTML = result.fullDesc()
-            }
-        </script>
+        <script type="module" src="main.js"></script>
         <input type="text" id="aaa" oninput="window.aaa()" size="99">
         <div id="tt">
 
