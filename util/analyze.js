@@ -22,97 +22,150 @@ const A = {
 
     analyze: (text) => {
         const result = {
-            iserr : false,
-            errorText : '',
-            attackPokemon: { name: "", options: {} },
-            defensePokemon: { name: "", options: {} },
+            iserr: false,
+            errorText: "",
+            attacker: { name: "", options: {} },
+            defender: { name: "", options: {} },
             move: { name: "", options: {} },
             field: {},
         };
-        
-        text = text.replace(/->/g, 'vs').replace(/=>/g, 'vs');
 
-        const pokemons = text.split('vs')
+        text = text.replace(/->/g, "vs").replace(/=>/g, "vs");
 
-        result.attackPokemon = A.analyzePoke(pokemons[0].trim())
-        if (pokemons.length > 1) result.defensePokemon = A.analyzePoke(pokemons[1].trim())
-        else result.defensePokemon = null;
+        const pokemons = text.split("vs");
 
-        if (!result.attackPokemon) {
+        result.attacker = A.analyzePoke(pokemons[0].trim());
+        if (pokemons.length > 1)
+            result.defender = A.analyzePoke(pokemons[1].trim());
+        else result.defender = null;
+
+        if (!result.attacker) {
             result.iserr = true;
-            result.errorText += '공격 포켓몬 존재하지 않음<br>'
+            result.errorText += "공격 포켓몬 존재하지 않음<br>";
             return result;
         }
-        if (!result.defensePokemon) {
+        if (!result.defender) {
             result.iserr = true;
-            result.errorText += '수비 포켓몬 존재하지 않음<br>'
+            result.errorText += "수비 포켓몬 존재하지 않음<br>";
             return result;
         }
 
-        result.move = result.attackPokemon.move;
+        result.move = result.attacker.move;
+        result.crit = result.attacker.crit || result.defender.crit;
 
-        result.field = Object.assign(result.attackPokemon.field, result.defensePokemon.field);
+        result.field = Object.assign(
+            result.attacker.field,
+            result.defender.field
+        );
 
-        //result.iserr = true;
-
-        /*
-
-        result.attackPokemon.name = "Charizard";
-        result.attackPokemon.options = {
-            item: "Choice Specs",
-            nature: "Timid",
-            evs: { spa: 252 },
-            boosts: { spa: 1 },
-        };
-        result.defensePokemon.name = "Chansey";
-        result.defensePokemon.options = {
-            item: "Eviolite",
-            nature: "Calm",
-            evs: { hp: 252, spd: 252 },
-        };
-        result.move.name = "Focus Blast"
-
-        */
         return result;
     },
 
-    analyzePoke : (text) => {
-        const result = { name: "", options: {level:50, evs:{}}, move: {name : '', options : {}}, field:{} , needNature : false}
+    analyzePoke: (text) => {
+        const result = {
+            name: "",
+            options: { level: 50, evs: {} },
+            move: { name: "", options: {} },
+            field: {},
+            needNature: false,
+            crit: false,
+        };
         if (!text) return null;
-        const tokens = text.split(' ');
+        const tokens = text.split(" ");
         tokens.forEach((token) => {
             token = A.chkAlias(token);
             if (A.isPokemon(token)) result.name = T.pokemon(token);
             if (A.isMove(token)) result.move.name = T.move(token);
             if (A.isItem(token)) result.options.item = T.item(token);
             if (A.isNature(token)) result.options.nature = T.nature(token);
-            if (A.isAbility(token)) result.options.ability = T.ability(token);
-            if (/특?[habcd체공방]\d{1,3}$/i.test(token)) result.options.evs = Object.assign(result.options.evs, A.evAnalyze(token))
-            if (/특?[habcd체공방]\d{1,3}\+$/i.test(token)) {
-                result.options.evs = Object.assign(result.options.evs, A.evAnalyze(token.replace('+','')))
+            if (A.isAbility(token)) {
+                result.options.ability = T.ability(token);
+                result.options.abilityOn = true;
+            }
+            if (/특?[habcd체공방]\d{1,3}$/i.test(token))
+                result.options.evs = Object.assign(
+                    result.options.evs,
+                    A.evAnalyze(token)
+                );
+            if (/특?[habcds체공방스]\d{1,3}\+$/i.test(token)) {
+                result.options.evs = Object.assign(
+                    result.options.evs,
+                    A.evAnalyze(token.replace("+", ""))
+                );
                 result.needNature = true;
             }
             if (token == "풀보정") {
-                result.options.evs = {hp : 252, atk : 252, def : 252, spa : 252, spd : 252, spe : 252}
+                result.options.evs = {
+                    hp: 252,
+                    atk: 252,
+                    def: 252,
+                    spa: 252,
+                    spd: 252,
+                    spe: 252,
+                };
                 result.needNature = true;
             }
-            if (token.slice(-2) == '테라') result.options.teraType = T.type(token.slice(0, -2));
-        })
+            if (token.slice(-2) == "테라")
+                result.options.teraType = T.type(token.slice(0, -2));
+            if (token == "급소") result.crit = true;
+        });
 
         if (!result.name) return null;
         return result;
     },
 
-    evAnalyze : (text) => {
-        const ev = text.match(/\d{3}$/) ? text.match(/\d{3}$/)[0] : text.match(/\d{2}$/) ? text.match(/\d{2}$/)[0] : text.match(/\d{1}$/)[0]
-        const evnum = Number(ev)
-        if (/^[Hh체]/i.test(text)) return {hp:evnum}
-        if (/^[Aa공]/i.test(text)) return {atk:evnum}
-        if (/^[Bb방]/i.test(text)) return {def:evnum}
-        if (/^[Cc]/i.test(text)) return {spa:evnum}
-        if (/^[Dd]/i.test(text)) return {spd:evnum}
-        if (/^[Ss]/i.test(text)) return {spe:evnum}
+    evAnalyze: (text) => {
+        const ev = text.match(/\d{3}$/)
+            ? text.match(/\d{3}$/)[0]
+            : text.match(/\d{2}$/)
+            ? text.match(/\d{2}$/)[0]
+            : text.match(/\d{1}$/)[0];
+        const evnum = Number(ev);
+        if (/^[Hh체]/i.test(text)) return { hp: evnum };
+        if (/^[Aa공]/i.test(text)) return { atk: evnum };
+        if (/^[Bb방]/i.test(text)) return { def: evnum };
+        if (/^[Cc]/i.test(text)) return { spa: evnum };
+        if (/^[Dd]/i.test(text)) return { spd: evnum };
+        if (/^특공/i.test(text)) return { spa: evnum };
+        if (/^특방/i.test(text)) return { spd: evnum };
+        if (/^[Ss스]/i.test(text)) return { spe: evnum };
         return {};
+    },
+
+    beforeCalc: (gen, aP, dP, move, field, analyzed) => {
+        if (analyzed.attacker.needNature) {
+            if (move.category == "Physical") {
+                aP.nature = T.nature("고집");
+            } else {
+                aP.nature = T.nature("조심");
+            }
+        }
+
+        if (analyzed.defender.needNature) {
+            if (move.category == "Physical") {
+                dP.nature = T.nature("장난꾸러기");
+            } else {
+                dP.nature = T.nature("신중");
+            }
+        }
+
+        if (aP.hasAbility(T.ability("애널라이즈"))) {
+            aP.boosts.spe = -6;
+            aP.evs.spe = 0;
+            aP.ivs.spe = 0;
+        }
+
+        if (
+            (aP.hasAbility(T.ability("심록")) ||
+                aP.hasAbility(T.ability("맹화")) ||
+                aP.hasAbility(T.ability("급류")) ||
+                aP.hasAbility(T.ability("벌레의알림"))) &&
+            aP.abilityOn
+        ) {
+            aP.originalCurHP = 1;
+        }
+
+        if (analyzed.crit) move.isCrit = true;
     },
 };
 
