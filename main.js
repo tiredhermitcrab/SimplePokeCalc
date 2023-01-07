@@ -1,4 +1,3 @@
-import T from "./util/translate.js";
 import A from "./util/analyze.js";
 
 Object.assign(window, window.calc);
@@ -6,29 +5,29 @@ Object.assign(window, window.calc);
 window.aaa = function () {
     const text = document.querySelector("#aaa").value;
     const gen = Generations.get(9);
-    const analyzedText = A.analyze(text);
+    const analyzed = A.analyze(text);
     var result = '';
-    if (!analyzedText) {
+    if (!analyzed) {
         result = "Error";
-    } else if (analyzedText.iserr) {
-        result = analyzedText.errorText;
+    } else if (analyzed.iserr) {
+        result = analyzed.errorText;
     } else {
         result = calculate(
             gen,
             new Pokemon(
                 gen,
-                analyzedText.attackPokemon.name,
-                analyzedText.attackPokemon.options
+                analyzed.attackPokemon.name,
+                analyzed.attackPokemon.options
             ),
             new Pokemon(
                 gen,
-                analyzedText.defensePokemon.name,
-                analyzedText.defensePokemon.options
+                analyzed.defensePokemon.name,
+                analyzed.defensePokemon.options
             ),
-            new Move(gen, analyzedText.move.name, analyzedText.move.options),
-            new Field(analyzedText.field)
+            new Move(gen, analyzed.move.name, analyzed.move.options),
+            new Field(analyzed.field)
         ).fullDesc();
     }
 
-    document.querySelector("#tt").innerHTML = result;
+    document.querySelector("#result").innerHTML = result;
 };
