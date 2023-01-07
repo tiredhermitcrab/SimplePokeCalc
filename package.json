@@ -1,0 +1,19 @@
+{
+  "name": "simplepokecalc",
+  "version": "1.0.0",
+  "description": "Korean One-line Pokemon Damage Calculator",
+  "main": "index.html",
+  "devDependencies": {},
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiredhermitcrab/SimplePokeCalc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiredhermitcrab/SimplePokeCalc/issues"
+  },
+  "homepage": "https://github.com/tiredhermitcrab/SimplePokeCalc#readme"
+}
