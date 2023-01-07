@@ -69,6 +69,7 @@ const A = {
             field: {},
             needNature: false,
             crit: false,
+            boost : '',
         };
         if (!text) return null;
         const tokens = text.split(" ");
@@ -82,7 +83,7 @@ const A = {
                 result.options.ability = T.ability(token);
                 result.options.abilityOn = true;
             }
-            if (/특?[habcd체공방]\d{1,3}$/i.test(token))
+            if (/특?[habcds체공방스]\d{1,3}$/i.test(token))
                 result.options.evs = Object.assign(
                     result.options.evs,
                     A.evAnalyze(token)
@@ -105,6 +106,7 @@ const A = {
                 };
                 result.needNature = true;
             }
+            if (/^[\+\-]\d$/.test(token)) result.boost = token;
             if (token.slice(-2) == "테라")
                 result.options.teraType = T.type(token.slice(0, -2));
             if (token == "급소") result.crit = true;
@@ -147,6 +149,15 @@ const A = {
             } else {
                 dP.nature = T.nature("신중");
             }
+        }
+
+        if(analyzed.attacker.boost) {
+            aP.boosts.atk = Number(analyzed.attacker.boost)
+            aP.boosts.spa = Number(analyzed.attacker.boost)
+        }
+        if(analyzed.defender.boost) {
+            dP.boosts.def = Number(analyzed.defender.boost)
+            dP.boosts.spd = Number(analyzed.defender.boost)
         }
 
         if (aP.hasAbility(T.ability("애널라이즈"))) {
