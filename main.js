@@ -1,5 +1,5 @@
-import T from "./util/translate.js";
-import A from "./util/analyze.js";
+import T from "/util/translate.js";
+import A from "/util/analyze.js";
 
 Object.assign(window, window.calc);
 
