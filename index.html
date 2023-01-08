@@ -1,40 +1,43 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <link type="text/css" rel="stylesheet" href="./css/style.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
-        <base href="/SimplePokeCalc/"> 
-        <script src="./calc/production.min.js"></script>
-        <script src="./calc/data/production.min.js"></script>
-        <script type="module" src="./main.js"></script>
-        <script>
-            var blank = true;
-        </script>
+
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <base href="/SimplePokeCalc/">
+    <script src="./calc/production.min.js"></script>
+    <script src="./calc/data/production.min.js"></script>
+    <script type="module" src="./main.js"></script>
+    <script>
+        var blank = true;
+    </script>
 
 
-        <title>간단 포켓몬 계산기</title>
-    </head>
-    <body>
-        <div class="wrapAll">
-            <div class="title">
-                간단 포켓몬 계산기
-            </div>
-            <div class="main">
-                <div class="input">
-                    <fieldset class="wrapper">
-                        <legend>입력하기</legend>
-                        <input type="text" id="aaa" oninput="window.aaa()">
-                    </fieldset>
-                </div>
-                <fieldset class="result">
-                    <legend>계산 결과</legend>
-                    <label id="result">이곳에 결과가 표시됩니다.</label>
+    <title>간단 포켓몬 계산기</title>
+</head>
+
+<body>
+    <div class="wrapAll">
+        <div class="title">
+            간단 포켓몬 계산기
+        </div>
+        <div class="main">
+            <div class="input">
+                <fieldset class="wrapper">
+                    <legend>입력하기</legend>
+                    <input type="text" id="aaa" oninput="window.aaa()">
                 </fieldset>
             </div>
+            <fieldset class="result">
+                <legend>계산 결과</legend>
+                <label id="result">이곳에 결과가 표시됩니다.</label>
+            </fieldset>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

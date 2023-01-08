@@ -1,13 +1,8 @@
 import alias from "./data/alias.js";
-import pokemon_en from "./data/pokemon_en.js";
 import pokemon_ko from "./data/pokemon_ko.js";
-import move_en from "./data/move_en.js";
 import move_ko from "./data/move_ko.js";
-import nature_en from "./data/nature_en.js";
 import nature_ko from "./data/nature_ko.js";
-import item_en from "./data/item_en.js";
 import item_ko from "./data/item_ko.js";
-import ability_en from "./data/ability_en.js";
 import ability_ko from "./data/ability_ko.js";
 
 import T from "./translate.js";
@@ -35,21 +30,21 @@ const A = {
         const pokemons = text.split("vs");
 
         result.attacker = A.analyzePoke(pokemons[0].trim());
-        if (pokemons.length > 1)
-            result.defender = A.analyzePoke(pokemons[1].trim());
+
+        if (result.attacker && pokemons.length > 1)
+            result.defender = A.analyzePoke(pokemons[1].trim(), false, result.attacker);
         else result.defender = null;
 
         if (!result.attacker) {
             result.iserr = true;
-            result.errorText += "공격 포켓몬 존재하지 않음<br>";
+            result.errorText += "공격 포켓몬 존재하지 않음";
             return result;
         }
         if (!result.defender) {
             result.iserr = true;
-            result.errorText += "수비 포켓몬 존재하지 않음<br>";
+            result.errorText += "수비 포켓몬 존재하지 않음";
             return result;
         }
-
         result.move = result.attacker.move;
         result.crit = result.attacker.crit || result.defender.crit;
 
@@ -61,7 +56,7 @@ const A = {
         return result;
     },
 
-    analyzePoke: (text) => {
+    analyzePoke: (text, isAttacker = true, attacker = null) => {
         const result = {
             name: "",
             options: { level: 50, evs: {} },
@@ -113,6 +108,42 @@ const A = {
         });
 
         if (!result.name) return null;
+        var move = {};
+        const gen = Generations.get(9);
+
+        if (attacker && attacker.move) result.move = attacker.move;
+        if (result.move.name) {
+            move = new Move(gen, result.move.name, result.move.options)
+        }
+
+        if (result.needNature && move && move.name != 'Tera Blast') {
+            if (move.category == 'Physical') {
+                if (isAttacker) result.options.nature = T.nature('고집')
+                else result.options.nature = T.nature('장난꾸러기')
+            } else {
+                if (isAttacker) result.options.nature = T.nature('조심')
+                else result.options.nature = T.nature('신중')
+            }
+        }
+        const rPokemon = isAttacker ? new Pokemon(gen, result.name, result.options) : new Pokemon(gen, attacker.name, attacker.options)
+
+        if (result.move.name == "Tera Blast" && result.needNature) {
+            if (rPokemon.stats.atk > rPokemon.stats.spa * 1.1) {
+                if (isAttacker) result.options.nature = T.nature('고집')
+                else result.options.nature = T.nature('장난꾸러기')
+            } else if (rPokemon.stats.atk * 1.1 < rPokemon.stats.spa) {
+                if (isAttacker) result.options.nature = T.nature('조심')
+                else result.options.nature = T.nature('신중')
+            } else if (rPokemon.stats.atk > rPokemon.stats.spa) {
+                if (isAttacker) result.options.nature = T.nature('고집')
+                else result.options.nature = T.nature('장난꾸러기')
+            } else {
+                if (isAttacker) result.options.nature = T.nature('조심')
+                else result.options.nature = T.nature('신중')
+            }
+        }
+
+
         return result;
     },
 
@@ -135,21 +166,6 @@ const A = {
     },
 
     beforeCalc: (gen, aP, dP, move, field, analyzed) => {
-        if (analyzed.attacker.needNature) {
-            if (move.category == "Physical") {
-                aP.nature = T.nature("고집");
-            } else {
-                aP.nature = T.nature("조심");
-            }
-        }
-
-        if (analyzed.defender.needNature) {
-            if (move.category == "Physical") {
-                dP.nature = T.nature("장난꾸러기");
-            } else {
-                dP.nature = T.nature("신중");
-            }
-        }
 
         if(analyzed.attacker.boost) {
             aP.boosts.atk = Number(analyzed.attacker.boost)
