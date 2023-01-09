@@ -29,6 +29,8 @@ window.aaa = function () {
 
 
         result = calculate(gen, aP, dP, move, field);
+
+        result = new cResult(result.gen, result.attacker, result.defender, result.move, result.field, result.damage, result.rawDesc)
         
         console.log(result.attacker ? JSON.stringify(result.attacker) : "");
         console.log(result.defender ? JSON.stringify(result.defender) : "");
