@@ -24,15 +24,20 @@ window.aaa = function () {
         );
         const move = new Move(gen, analyzed.move.name, analyzed.move.options)
         const field = new Field(analyzed.field)
+        
         A.beforeCalc(gen, aP, dP, move, field, analyzed);
 
+
         result = calculate(gen, aP, dP, move, field);
+        
+        console.log(result.attacker ? JSON.stringify(result.attacker) : "");
+        console.log(result.defender ? JSON.stringify(result.defender) : "");
+        
+        
     }
 
     document.querySelector("#result").innerHTML = result.fullDesc
         ? result.fullDesc()
         : result;
 
-    console.log(result.attacker ? JSON.stringify(result.attacker) : "");
-    console.log(result.defender ? JSON.stringify(result.defender) : "");
 };

@@ -97,7 +97,6 @@ const A = {
                     def: 252,
                     spa: 252,
                     spd: 252,
-                    spe: 252,
                 };
                 result.needNature = true;
             }
@@ -177,9 +176,10 @@ const A = {
         }
 
         if (aP.hasAbility(T.ability("애널라이즈"))) {
-            aP.boosts.spe = -6;
-            aP.evs.spe = 0;
-            aP.ivs.spe = 0;
+            console.log("analytic")
+            if(aP.stats.spe > dP.stats.spe) {
+                aP.species.baseStats.spe = dP.species.baseStats.spe - 1;
+            }
         }
 
         if (
