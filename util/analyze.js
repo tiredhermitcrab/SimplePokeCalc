@@ -6,6 +6,13 @@ import item_ko from "./data/item_ko.js";
 import ability_ko from "./data/ability_ko.js";
 
 import T from "./translate.js";
+const merge = (target, source) => {
+    for (let key of Object.keys(source)) {
+      if (source[key] instanceof Object) Object.assign(source[key], merge(target[key], source[key]))
+    }
+    Object.assign(target || {}, source)
+    return target
+  }
 
 const A = {
     chkAlias: (token) => alias[token] || token,
@@ -14,6 +21,7 @@ const A = {
     isNature: (p) => (nature_ko.indexOf(p) > -1 ? true : false),
     isItem: (p) => (item_ko.indexOf(p) > -1 ? true : false),
     isAbility: (p) => (ability_ko.indexOf(p) > -1 ? true : false),
+    isWeather: (p) => (T.weather(p) ? true : false),
 
     analyze: (text) => {
         const result = {
@@ -48,10 +56,11 @@ const A = {
         result.move = result.attacker.move;
         result.crit = result.attacker.crit || result.defender.crit;
 
-        result.field = Object.assign(
+        result.field = merge(
             result.attacker.field,
             result.defender.field
         );
+
 
         return result;
     },
@@ -61,7 +70,7 @@ const A = {
             name: "",
             options: { level: 50, evs: {} },
             move: { name: "", options: {} },
-            field: {},
+            field: {attackerSide: {}, defenderSide: {}},
             needNature: false,
             crit: false,
             boost : '',
@@ -71,8 +80,23 @@ const A = {
         tokens.forEach((token) => {
             token = A.chkAlias(token);
             if (A.isPokemon(token)) result.name = T.pokemon(token);
+            if (token == '도우미' && isAttacker) {
+                result.field.attackerSide.isHelpingHand = true
+                return;
+            }
+            if (/필드$/.test(token)) {
+                result.field.terrain = T.terrain(token.slice(0,-2));
+                return;
+            }
+            if (A.isWeather(token)) {
+                result.field.weather = T.weather(token);
+                return;
+            }
             if (A.isMove(token)) result.move.name = T.move(token);
-            if (A.isItem(token)) result.options.item = T.item(token);
+            if (A.isItem(token)) {
+                result.options.item = T.item(token);
+                if (token == "속임수주사위" && !result.move.options.hits) result.move.options.hits = 4;
+            }
             if (A.isNature(token)) result.options.nature = T.nature(token);
             if (A.isAbility(token)) {
                 result.options.ability = T.ability(token);
@@ -100,6 +124,7 @@ const A = {
                 };
                 result.needNature = true;
             }
+            if (/^[2345]타$/.test(token)) result.move.options.hits = Number(token.slice(0, 1))
             if (/^[\+\-]\d$/.test(token)) result.boost = token;
             if (token.slice(-2) == "테라")
                 result.options.teraType = T.type(token.slice(0, -2));

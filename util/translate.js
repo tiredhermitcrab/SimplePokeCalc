@@ -16,7 +16,7 @@ const terrain_en = ['Electric', 'Psychic', 'Grassy', 'Misty']
 const terrain_ko = ['일렉트릭', '사이코', '그래스', '미스트']
 
 const weather_en = ['Sand', 'Sun', 'Rain', 'Hail', 'Snow', 'Harsh Sunshine', 'Heavy Rain', 'Strong Winds']
-const weather_ko = ['모래바람', '쾌청', '비바라기', '싸라기눈', '설경', '강한쾌청', '강한비', '난기류']
+const weather_ko = ['모래바람', '쾌청', '비', '싸라기눈', '눈', '큰가뭄', '폭우', '난기류']
 
 const T = {
     pokemon : name => (

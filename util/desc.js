@@ -24,7 +24,6 @@ var util_2 = require("./mechanics/util");
 window.calc.__esModule = true;
 window.calc.getKOChance = window.calc.getRecoil = window.calc.getRecovery = window.calc.displayMove = window.calc.display = void 0;
 function display(gen, attacker, defender, move, field, damage, rawDesc, notation, err) {
-    console.log(JSON.stringify(rawDesc))
     if (notation === void 0) { notation = '%'; }
     if (err === void 0) { err = true; }
     var _a = __read((0, result_1.damageRange)(damage), 2), minDamage = _a[0], maxDamage = _a[1];
@@ -41,8 +40,8 @@ function display(gen, attacker, defender, move, field, damage, rawDesc, notation
     if (move.category === 'Status' && !move.named('Nature Power'))
         return "".concat(desc, ": ").concat(damageText);
     var koChanceText = getKOChance(gen, attacker, defender, move, field, damage, err).text;
-    return koChanceText ? `${desc}: ${damageText}${recoveryText && ` (${recoveryText})`}${recoilText && ` (${recoilText})`} -- ${koChanceText}` 
-    : `${desc}: ${damageText}${recoveryText && ` (${recoveryText})`}${recoilText && ` (${recoilText})`}`;
+    return koChanceText ? `${desc} : ${damageText}${recoveryText && ` (${recoveryText})`}${recoilText && ` (${recoilText})`} -- ${koChanceText}` 
+    : `${desc} : ${damageText}${recoveryText && ` (${recoveryText})`}${recoilText && ` (${recoilText})`}`;
 }
 window.calc.display = display;
 function displayMove(gen, attacker, defender, move, damage, notation) {
@@ -238,7 +237,7 @@ function getKOChance(gen, attacker, defender, move, field, damage, err) {
             }
             else if (predictTotal(damage[damage.length - 1], eot.damage, i, 1, toxicCounter, defender.maxHP()) >=
                 defender.curHP() - hazards.damage) {
-                return { n: i, text: qualifier + "possible ".concat(i, "HKO").concat(afterText) };
+                return { n: i, text: qualifier + "".concat(i, "타").concat(' 이상').concat(afterText) };
             }
         }
     }
@@ -765,12 +764,13 @@ function buildDescription(description, attacker, defender) {
     }
     output += T.pokemon(description.defenderName);
     if (description.weather && description.terrain) {
+        output += ' in ' + T.weather(description.weather) + ", " + T.terrain(description.terrain) + '필드';
     }
     else if (description.weather) {
         output += ' in ' + T.weather(description.weather);
     }
     else if (description.terrain) {
-        output += ' ' + T.terrain(description.terrain) + '필드';
+        output += ' in ' + T.terrain(description.terrain) + '필드';
     }
     if (description.isReflect) {
         output += ' 리플렉터 적용';
