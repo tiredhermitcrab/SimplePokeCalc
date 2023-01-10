@@ -129,6 +129,7 @@ const A = {
             if (token.slice(-2) == "테라")
                 result.options.teraType = T.type(token.slice(0, -2));
             if (token == "급소") result.crit = true;
+            if (token == "분산") result.field.gameType = 'Doubles';
         });
 
         if (!result.name) return null;

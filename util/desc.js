@@ -31,6 +31,9 @@ function display(gen, attacker, defender, move, field, damage, rawDesc, notation
     var max = (typeof maxDamage === 'number' ? maxDamage : maxDamage[0] + maxDamage[1]) * move.hits;
     var minDisplay = toDisplay(notation, min, defender.maxHP());
     var maxDisplay = toDisplay(notation, max, defender.maxHP());
+    const isSpread = field.gameType !== 'Singles' &&
+    ['allAdjacent', 'allAdjacentFoes'].includes(move.target)
+    rawDesc.isSpread = isSpread;
     var desc = buildDescription(rawDesc, attacker, defender);
     var damageText = `${min}-${max} (${minDisplay} - ${maxDisplay}${notation})`;
     var recovery = getRecovery(gen, attacker, defender, move, damage, notation)
@@ -718,6 +721,9 @@ function buildDescription(description, attacker, defender) {
     }
     if (description.isSwitching) {
         output += ' 교체 ';
+    }
+    if (description.isSpread) {
+        output += ' 분산 ';
     }
     output += T.move(description.moveName) + ' ';
     if (description.moveBP && description.moveType) {
