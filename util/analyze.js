@@ -112,7 +112,7 @@ const A = {
                     result.options.evs,
                     A.evAnalyze(token.replace("+", ""))
                 );
-                result.needNature = true;
+                result.needNature = A.evAnalyze(token.replace("+", ""));
             }
             if (token == "풀보정") {
                 result.options.evs = {
@@ -122,7 +122,7 @@ const A = {
                     spa: 252,
                     spd: 252,
                 };
-                result.needNature = true;
+                result.needNature = result.options.evs;
             }
             if (/^[2345]타$/.test(token)) result.move.options.hits = Number(token.slice(0, 1))
             if (/^[\+\-]\d$/.test(token)) result.boost = token;
@@ -144,10 +144,10 @@ const A = {
         if (result.needNature && move && move.name != 'Tera Blast') {
             if (move.category == 'Physical') {
                 if (isAttacker) result.options.nature = T.nature('고집')
-                else result.options.nature = T.nature('장난꾸러기')
+                else if (result.needNature.def) result.options.nature = T.nature('장난꾸러기')
             } else {
                 if (isAttacker) result.options.nature = T.nature('조심')
-                else result.options.nature = T.nature('신중')
+                else if (result.needNature.spd) result.options.nature = T.nature('신중')
             }
         }
         const rPokemon = isAttacker ? new Pokemon(gen, result.name, result.options) : new Pokemon(gen, attacker.name, attacker.options)
@@ -155,16 +155,16 @@ const A = {
         if (result.move.name == "Tera Blast" && result.needNature) {
             if (rPokemon.stats.atk > rPokemon.stats.spa * 1.1) {
                 if (isAttacker) result.options.nature = T.nature('고집')
-                else result.options.nature = T.nature('장난꾸러기')
+                else if (result.needNature.def) result.options.nature = T.nature('장난꾸러기')
             } else if (rPokemon.stats.atk * 1.1 < rPokemon.stats.spa) {
                 if (isAttacker) result.options.nature = T.nature('조심')
-                else result.options.nature = T.nature('신중')
+                else if (result.needNature.spd) result.options.nature = T.nature('신중')
             } else if (rPokemon.stats.atk > rPokemon.stats.spa) {
                 if (isAttacker) result.options.nature = T.nature('고집')
-                else result.options.nature = T.nature('장난꾸러기')
+                else if (result.needNature.def) result.options.nature = T.nature('장난꾸러기')
             } else {
                 if (isAttacker) result.options.nature = T.nature('조심')
-                else result.options.nature = T.nature('신중')
+                else if (result.needNature.spd) result.options.nature = T.nature('신중')
             }
         }
 
