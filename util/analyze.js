@@ -33,7 +33,7 @@ const A = {
             field: {},
         };
 
-        text = text.replace(/->/g, "vs").replace(/=>/g, "vs");
+        text = text.replace(/->/g, "vs").replace(/=>/g, "vs").replace(/>/g, "vs");
 
         const pokemons = text.split("vs");
 
@@ -68,7 +68,7 @@ const A = {
     analyzePoke: (text, isAttacker = true, attacker = null) => {
         const result = {
             name: "",
-            options: { level: 50, evs: {} },
+            options: { level: 50, evs: {}, ability : '불면' },
             move: { name: "", options: {} },
             field: {attackerSide: {}, defenderSide: {}},
             needNature: false,
@@ -76,23 +76,10 @@ const A = {
             boost : '',
         };
         if (!text) return null;
-        const tokens = text.split(" ");
+        const tokens = text.split(" ").map(t => A.chkAlias(t)).join(' ').split(' ');
         tokens.forEach((token) => {
-            token = A.chkAlias(token);
+            if (A.fieldAnalyze(token, result.field, isAttacker)) return;
             if (A.isPokemon(token)) result.name = T.pokemon(token);
-            if (token == '도우미' && isAttacker) {
-                result.field.attackerSide.isHelpingHand = true
-                return;
-            }
-            if (/필드$/.test(token)) {
-                result.field.terrain = T.terrain(token.slice(0,-2));
-                return;
-            }
-            if (A.isWeather(token)) {
-                result.field.weather = T.weather(token);
-                return;
-            }
-            if (A.isMove(token)) result.move.name = T.move(token);
             if (A.isItem(token)) {
                 result.options.item = T.item(token);
                 if (token == "속임수주사위" && !result.move.options.hits) result.move.options.hits = 4;
@@ -129,7 +116,11 @@ const A = {
             if (token.slice(-2) == "테라")
                 result.options.teraType = T.type(token.slice(0, -2));
             if (token == "급소") result.crit = true;
-            if (token == "분산") result.field.gameType = 'Doubles';
+            if (/^[123456]껍질깨기$/.test(token)) {
+                if (isAttacker) result.boost = '+' + (2 * Number(token.slice(0,1)));
+                else result.boost = "-" + token.slice(0,1);
+            }
+            if (A.isMove(token)) result.move.name = T.move(token);
         });
 
         if (!result.name) return null;
@@ -195,6 +186,7 @@ const A = {
         if(analyzed.attacker.boost) {
             aP.boosts.atk = Number(analyzed.attacker.boost)
             aP.boosts.spa = Number(analyzed.attacker.boost)
+            if (move.name == '바디프레스') aP.boosts.def = Number(analyzed.attacker.boost)
         }
         if(analyzed.defender.boost) {
             dP.boosts.def = Number(analyzed.defender.boost)
@@ -202,24 +194,96 @@ const A = {
         }
 
         if (aP.hasAbility(T.ability("애널라이즈"))) {
-            console.log("analytic")
             if(aP.stats.spe > dP.stats.spe) {
                 aP.species.baseStats.spe = dP.species.baseStats.spe - 1;
             }
+        }
+        if (aP.hasAbility(T.ability("진홍빛고동"))) {
+            field.weather = T.weather('쾌청')
         }
 
         if (
             (aP.hasAbility(T.ability("심록")) ||
                 aP.hasAbility(T.ability("맹화")) ||
                 aP.hasAbility(T.ability("급류")) ||
+                aP.hasAbility(T.ability("무기력")) ||
                 aP.hasAbility(T.ability("벌레의알림"))) &&
             aP.abilityOn
         ) {
             aP.originalCurHP = 1;
         }
 
+        if (aP.hasAbility(T.ability('달마모드')) && aP.abilityOn && /불비달마/.test(T.pokemon(aP.name))) {
+            aP.species = gen.species.get(toID(T.pokemon('달마모드' + T.pokemon(aP.name))));
+            analyzed.attackerName = T.pokemon('달마모드' + T.pokemon(aP.name));
+        }
+
+        if (dP.hasAbility(T.ability('달마모드')) && dP.abilityOn && /불비달마/.test(T.pokemon(dP.name))) {
+            dP.species = gen.species.get(toID(T.pokemon('달마모드' + T.pokemon(dP.name))));
+            analyzed.defenderName = T.pokemon('달마모드' + T.pokemon(dP.name));
+        }
+
+        if (aP.hasAbility(T.ability('스킬링크'))) move.hits = 5;
+
         if (analyzed.crit) move.isCrit = true;
     },
+
+    fieldAnalyze : (token, field, isAttacker) => {
+        if (token == "분산" || token == "더블배틀") field.gameType = 'Doubles';
+        if (token == '도우미' && isAttacker) {
+            field.attackerSide.isHelpingHand = true
+            return true;
+        }
+        if (token == '파워스폿' && isAttacker) {
+            field.attackerSide.isPowerSpot = true
+            return true;
+        }
+        if (token == '배터리' && isBattery) {
+            field.attackerSide.isPowerSpot = true
+            return true;
+        }
+        if (token == '방어' && !isAttacker) {
+            field.defenderSide.isProtected = true
+            return true;
+        }
+        if (token == '리플렉터' && !isAttacker) {
+            field.defenderSide.isReflect = true
+            return true;
+        }
+        if (token == '빛의장막' && !isAttacker) {
+            field.defenderSide.isLightScreen = true
+            return true;
+        }
+        if (token == '오로라베일' && !isAttacker) {
+            field.defenderSide.isAuroraVeil = true
+            return true;
+        }
+        if (token == '프렌드가드' && !isAttacker) {
+            field.defenderSide.isFriendGuard = true
+            return true;
+        }
+        if (token == '매직룸') {
+            field.isMagicRoom = true
+            return true;
+        }
+        if (token == '원더룸') {
+            field.isWonderRoom = true
+            return true;
+        }
+        if (token == '중력') {
+            field.isGravity = true
+            return true;
+        }
+        if (/필드$/.test(token)) {
+            field.terrain = T.terrain(token.slice(0,-2));
+            return true;
+        }
+        if (A.isWeather(token)) {
+            field.weather = T.weather(token);
+            return true;
+        }
+        return false;
+    }
 };
 
 window.A = A;

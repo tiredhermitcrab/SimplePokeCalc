@@ -28,7 +28,7 @@ var desc_1 = window.calc;
 window.calc.__esModule = true;
 window.calc.damageRange = window.calc.Result = void 0;
 var Result = (function () {
-    function Result(gen, attacker, defender, move, field, damage, rawDesc) {
+    function Result(gen, attacker, defender, move, field, damage, rawDesc, analyzed) {
         this.gen = gen;
         this.attacker = attacker;
         this.defender = defender;
@@ -36,6 +36,10 @@ var Result = (function () {
         this.field = field;
         this.damage = damage;
         this.rawDesc = rawDesc;
+        this.analyzed = analyzed;
+
+        if (analyzed.attackerName) rawDesc.attackerName = analyzed.attackerName;
+        if (analyzed.defenderName) rawDesc.defenderName = analyzed.defenderName;
     }
     Result.prototype.desc = function () {
         return this.fullDesc();

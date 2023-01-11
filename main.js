@@ -87,13 +87,16 @@ window.aaa = function () {
         );
         const move = new Move(gen, analyzed.move.name, analyzed.move.options)
         const field = new Field(analyzed.field)
+
+        aP.options = analyzed.attacker.options
+        dP.options = analyzed.defender.options
         
         A.beforeCalc(gen, aP, dP, move, field, analyzed);
 
 
         result = calculate(gen, aP, dP, move, field);
 
-        result = new cResult(result.gen, result.attacker, result.defender, result.move, result.field, result.damage, result.rawDesc)
+        result = new cResult(result.gen, result.attacker, result.defender, result.move, result.field, result.damage, result.rawDesc, analyzed)
         
         console.log(result.attacker ? JSON.stringify(result.attacker) : "");
         console.log(result.defender ? JSON.stringify(result.defender) : "");

@@ -778,27 +778,26 @@ function buildDescription(description, attacker, defender) {
     else if (description.terrain) {
         output += ' in ' + T.terrain(description.terrain) + '필드';
     }
+    var additionalText = '';
     if (description.isReflect) {
-        output += ' 리플렉터 적용';
+        additionalText += '리플렉터 ';
     }
     else if (description.isLightScreen) {
-        output += ' 빛의장막 적용';
+        additionalText += '빛의장막 ';
     }
     if (description.isFlowerGiftDefender) {
-        output += ' 플라워기프트 적용';
+        additionalText += '플라워기프트 ';
     }
     if (description.isFriendGuard) {
-        output += ' 프렌드가드 적용';
+        additionalText += '프렌드가드 ';
     }
     if (description.isAuroraVeil) {
-        output += ' 오로라베일 적용';
-    }
-    if (description.isCritical) {
-        output += ' 급소';
+        additionalText += '오로라베일 ';
     }
     if (description.isWonderRoom) {
-        output += ' 원더룸';
+        additionalText += '원더룸 ';
     }
+    if (additionalText) output += ' (' + additionalText.trim().split(' ').join(', ') + ' 적용) '
     return output;
 }
 function getDescriptionLevels(attacker, defender) {

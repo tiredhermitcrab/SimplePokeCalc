@@ -4,3 +4,4 @@ dist/*
 package-lock.json
 index-test.html
 damage-calc
+todo.txt
