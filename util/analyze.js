@@ -74,16 +74,14 @@ const A = {
             needNature: false,
             crit: false,
             boost : '',
+            itemName : false,
         };
         if (!text) return null;
         const tokens = text.split(" ").map(t => A.chkAlias(t)).join(' ').split(' ');
         tokens.forEach((token) => {
             if (A.fieldAnalyze(token, result.field, isAttacker)) return;
             if (A.isPokemon(token)) result.name = T.pokemon(token);
-            if (A.isItem(token)) {
-                result.options.item = T.item(token);
-                if (token == "속임수주사위" && !result.move.options.hits) result.move.options.hits = 4;
-            }
+            if (A.isItem(token)) result.options.item = T.item(token);
             if (A.isNature(token)) result.options.nature = T.nature(token);
             if (A.isAbility(token)) {
                 result.options.ability = T.ability(token);
@@ -123,6 +121,7 @@ const A = {
             if (A.isMove(token)) result.move.name = T.move(token);
         });
 
+
         if (!result.name) return null;
         var move = {};
         const gen = Generations.get(9);
@@ -132,10 +131,16 @@ const A = {
             move = new Move(gen, result.move.name, result.move.options)
         }
 
+        if (move && move.hits == 3 && !attacker && !result.move.options.hits && T.item(result.options.item) == '속임수주사위') {
+            result.move.options.hits = 4;
+            result.itemName = true;
+        }
+
         if (result.needNature && move && move.name != 'Tera Blast') {
             if (move.category == 'Physical') {
                 if (isAttacker) result.options.nature = T.nature('고집')
                 else if (result.needNature.def) result.options.nature = T.nature('장난꾸러기')
+                if (isAttacker && move.name == T.move('바디프레스')) result.options.nature = T.nature('장난꾸러기')
             } else {
                 if (isAttacker) result.options.nature = T.nature('조심')
                 else if (result.needNature.spd) result.options.nature = T.nature('신중')
@@ -186,7 +191,7 @@ const A = {
         if(analyzed.attacker.boost) {
             aP.boosts.atk = Number(analyzed.attacker.boost)
             aP.boosts.spa = Number(analyzed.attacker.boost)
-            if (move.name == '바디프레스') aP.boosts.def = Number(analyzed.attacker.boost)
+            if (move.name == T.move('바디프레스')) aP.boosts.def = Number(analyzed.attacker.boost)
         }
         if(analyzed.defender.boost) {
             dP.boosts.def = Number(analyzed.defender.boost)

@@ -37,6 +37,7 @@ var Result = (function () {
         this.damage = damage;
         this.rawDesc = rawDesc;
         this.analyzed = analyzed;
+        this.rawDesc.analyzed = analyzed;
 
         if (analyzed.attackerName) rawDesc.attackerName = analyzed.attackerName;
         if (analyzed.defenderName) rawDesc.defenderName = analyzed.defenderName;

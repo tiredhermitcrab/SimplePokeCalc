@@ -689,6 +689,7 @@ function buildDescription(description, attacker, defender) {
     output = appendIfSet(output, T.ev(description.attackEVs));
     output = appendIfSet(output, T.item(description.attackerItem));
     output = appendIfSet(output, T.ability(description.attackerAbility));
+    if (description.analyzed.attacker.itemName) output += T.item(description.analyzed.attacker.options.item) + " "
     output = appendIfSet(output, description.rivalry);
     if (description.isBurned) {
         output += '화상 ';
@@ -752,6 +753,7 @@ function buildDescription(description, attacker, defender) {
         output += ' ' + T.ev(description.defenseEVs) + ' ';
     }
     output = appendIfSet(output, T.item(description.defenderItem));
+    if (description.analyzed.defender.itemName) output += T.item(description.analyzed.defender.options.item) + " "
     output = appendIfSet(output, T.ability(description.defenderAbility));
     if (description.isTabletsOfRuin) {
         output += T.ability('Tablets of Ruin') + ' ';
