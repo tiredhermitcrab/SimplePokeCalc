@@ -49,7 +49,8 @@ const T = {
             Def : 'b',
             SpD : 'd',
             SpA : 'c',
-            HP : 'h'
+            HP : 'h',
+            Spe : 's'
         }
         for (var et in evTrans) {
             if (new RegExp(et).test(evText)) {

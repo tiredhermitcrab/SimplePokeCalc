@@ -13,5 +13,6 @@
   "bugs": {
     "url": "https://github.com/tiredhermitcrab/SimplePokeCalc/issues"
   },
-  "homepage": "https://tiredhermitcrab.github.io/SimplePokeCalc/"
+  "homepage": "https://tiredhermitcrab.github.io/SimplePokeCalc/",
+  "type" : "module"
 }

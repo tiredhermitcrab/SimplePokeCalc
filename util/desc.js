@@ -218,7 +218,7 @@ function getKOChance(gen, attacker, defender, move, field, damage, err) {
             };
         }
         if (damage.length === 256) {
-            qualifier = 'approx. ';
+            qualifier = '약 ';
         }
         for (var i = 2; i <= 4; i++) {
             var chance_1 = computeKOChance(damage, defender.curHP() - hazards.damage, eot.damage, i, 1, defender.maxHP(), toxicCounter);
@@ -250,7 +250,7 @@ function getKOChance(gen, attacker, defender, move, field, damage, err) {
             return {
                 chance: chance,
                 n: move.timesUsed,
-                text: "".concat(qualifier || 'guaranteed ', "KO in ").concat(move.timesUsed, " turns").concat(afterText)
+                text: "".concat(qualifier || '확정 ', "KO in ").concat(move.timesUsed, "턴").concat(afterText)
             };
         }
         else if (chance > 0) {
@@ -267,14 +267,14 @@ function getKOChance(gen, attacker, defender, move, field, damage, err) {
             return {
                 chance: 1,
                 n: move.timesUsed,
-                text: "".concat(qualifier || 'guaranteed ', "KO in ").concat(move.timesUsed, " turns").concat(afterText)
+                text: "".concat(qualifier || '확정 ', "KO in ").concat(move.timesUsed, "턴").concat(afterText)
             };
         }
         else if (predictTotal(damage[damage.length - 1], eot.damage, move.hits, move.timesUsed, toxicCounter, defender.maxHP()) >=
             defender.curHP() - hazards.damage) {
             return {
                 n: move.timesUsed,
-                text: qualifier + "possible KO in ".concat(move.timesUsed, " turns").concat(afterText)
+                text: qualifier + "possible KO in ".concat(move.timesUsed, "턴").concat(afterText)
             };
         }
         return { n: move.timesUsed, text: qualifier + 'not a KO' };
@@ -317,14 +317,14 @@ function getHazards(gen, defender, defenderSide) {
         var effectiveness = rockType.effectiveness[defender.types[0]] *
             (defender.types[1] ? rockType.effectiveness[defender.types[1]] : 1);
         damage += Math.floor((effectiveness * defender.maxHP()) / 8);
-        texts.push('Stealth Rock');
+        texts.push('스텔스록');
     }
     if (defenderSide.steelsurge && !defender.hasAbility('Magic Guard', 'Mountaineer')) {
         var steelType = gen.types.get('steel');
         var effectiveness = steelType.effectiveness[defender.types[0]] *
             (defender.types[1] ? steelType.effectiveness[defender.types[1]] : 1);
         damage += Math.floor((effectiveness * defender.maxHP()) / 8);
-        texts.push('Steelsurge');
+        texts.push('거다이강철진');
     }
     if (!defender.hasType('Flying') &&
         !defender.hasAbility('Magic Guard', 'Levitate') &&
@@ -335,16 +335,16 @@ function getHazards(gen, defender, defenderSide) {
                 texts.push('Spikes');
             }
             else {
-                texts.push('1 layer of Spikes');
+                texts.push('1압정뿌리기');
             }
         }
         else if (defenderSide.spikes === 2) {
             damage += Math.floor(defender.maxHP() / 6);
-            texts.push('2 layers of Spikes');
+            texts.push('2압정뿌리기');
         }
         else if (defenderSide.spikes === 3) {
             damage += Math.floor(defender.maxHP() / 4);
-            texts.push('3 layers of Spikes');
+            texts.push('3압정뿌리기');
         }
     }
     if (isNaN(damage)) {
@@ -358,17 +358,17 @@ function getEndOfTurn(gen, attacker, defender, move, field) {
     if (field.hasWeather('Sun', 'Harsh Sunshine')) {
         if (defender.hasAbility('Dry Skin', 'Solar Power')) {
             damage -= Math.floor(defender.maxHP() / 8);
-            texts.push(defender.ability + ' damage');
+            texts.push(T.ability(defender.ability) + ' 피해');
         }
     }
     else if (field.hasWeather('Rain', 'Heavy Rain')) {
         if (defender.hasAbility('Dry Skin')) {
             damage += Math.floor(defender.maxHP() / 8);
-            texts.push('Dry Skin recovery');
+            texts.push('건조피부 회복');
         }
         else if (defender.hasAbility('Rain Dish')) {
             damage += Math.floor(defender.maxHP() / 16);
-            texts.push('Rain Dish recovery');
+            texts.push('젖은접시 회복');
         }
     }
     else if (field.hasWeather('Sand')) {
@@ -376,138 +376,138 @@ function getEndOfTurn(gen, attacker, defender, move, field) {
             !defender.hasAbility('Magic Guard', 'Overcoat', 'Sand Force', 'Sand Rush', 'Sand Veil') &&
             !defender.hasItem('Safety Goggles')) {
             damage -= Math.floor(defender.maxHP() / (gen.num === 2 ? 8 : 16));
-            texts.push('sandstorm damage');
+            texts.push('모래바람 피해');
         }
     }
     else if (field.hasWeather('Hail', 'Snow')) {
         if (defender.hasAbility('Ice Body')) {
             damage += Math.floor(defender.maxHP() / 16);
-            texts.push('Ice Body recovery');
+            texts.push('아이스바디 회복');
         }
         else if (!defender.hasType('Ice') &&
             !defender.hasAbility('Magic Guard', 'Overcoat', 'Snow Cloak') &&
             !defender.hasItem('Safety Goggles') &&
             field.hasWeather('Hail')) {
             damage -= Math.floor(defender.maxHP() / 16);
-            texts.push('hail damage');
+            texts.push('싸라기눈 피해 ');
         }
     }
     var loseItem = move.named('Knock Off') && !defender.hasAbility('Sticky Hold');
     if (defender.hasItem('Leftovers') && !loseItem) {
         damage += Math.floor(defender.maxHP() / 16);
-        texts.push('Leftovers recovery');
+        texts.push('먹다남은음식 회복');
     }
     else if (defender.hasItem('Black Sludge') && !loseItem) {
         if (defender.hasType('Poison')) {
             damage += Math.floor(defender.maxHP() / 16);
-            texts.push('Black Sludge recovery');
+            texts.push('검은오물 회복');
         }
         else if (!defender.hasAbility('Magic Guard', 'Klutz')) {
             damage -= Math.floor(defender.maxHP() / 8);
-            texts.push('Black Sludge damage');
+            texts.push('검은오물 피해');
         }
     }
     else if (defender.hasItem('Sticky Barb')) {
         damage -= Math.floor(defender.maxHP() / 8);
-        texts.push('Sticky Barb damage');
+        texts.push('끈적끈적바늘 피해');
     }
     if (field.defenderSide.isSeeded) {
         if (!defender.hasAbility('Magic Guard')) {
             damage -= Math.floor(defender.maxHP() / (gen.num >= 2 ? 8 : 16));
-            texts.push('Leech Seed damage');
+            texts.push('씨뿌리기 피해');
         }
     }
     if (field.attackerSide.isSeeded && !attacker.hasAbility('Magic Guard')) {
         if (attacker.hasAbility('Liquid Ooze')) {
             damage -= Math.floor(attacker.maxHP() / (gen.num >= 2 ? 8 : 16));
-            texts.push('Liquid Ooze damage');
+            texts.push('해감액 피해');
         }
         else {
             damage += Math.floor(attacker.maxHP() / (gen.num >= 2 ? 8 : 16));
-            texts.push('Leech Seed recovery');
+            texts.push('씨뿌리기 회복');
         }
     }
     if (field.hasTerrain('Grassy')) {
         if ((0, util_2.isGrounded)(defender, field)) {
             damage += Math.floor(defender.maxHP() / 16);
-            texts.push('Grassy Terrain recovery');
+            texts.push('그래스필드 회복');
         }
     }
     if (defender.hasStatus('psn')) {
         if (defender.hasAbility('Poison Heal')) {
             damage += Math.floor(defender.maxHP() / 8);
-            texts.push('Poison Heal');
+            texts.push('포이즌힐 회복');
         }
         else if (!defender.hasAbility('Magic Guard')) {
             damage -= Math.floor(defender.maxHP() / (gen.num === 1 ? 16 : 8));
-            texts.push('poison damage');
+            texts.push('독 피해');
         }
     }
     else if (defender.hasStatus('tox')) {
         if (defender.hasAbility('Poison Heal')) {
             damage += Math.floor(defender.maxHP() / 8);
-            texts.push('Poison Heal');
+            texts.push('포이즌힐 회복');
         }
         else if (!defender.hasAbility('Magic Guard')) {
-            texts.push('toxic damage');
+            texts.push('맹독 피해');
         }
     }
     else if (defender.hasStatus('brn')) {
         if (defender.hasAbility('Heatproof')) {
             damage -= Math.floor(defender.maxHP() / (gen.num > 6 ? 32 : 16));
-            texts.push('reduced burn damage');
+            texts.push('내열 화상 피해');
         }
         else if (!defender.hasAbility('Magic Guard')) {
             damage -= Math.floor(defender.maxHP() / (gen.num === 1 || gen.num > 6 ? 16 : 8));
-            texts.push('burn damage');
+            texts.push('화상 피해');
         }
     }
     else if ((defender.hasStatus('slp') || defender.hasAbility('Comatose')) &&
         attacker.hasAbility('isBadDreams') &&
         !defender.hasAbility('Magic Guard')) {
         damage -= Math.floor(defender.maxHP() / 8);
-        texts.push('Bad Dreams');
+        texts.push('나이트메어 피해');
     }
     if (!defender.hasAbility('Magic Guard') && TRAPPING.includes(move.name)) {
         if (attacker.hasItem('Binding Band')) {
             damage -= gen.num > 5 ? Math.floor(defender.maxHP() / 6) : Math.floor(defender.maxHP() / 8);
-            texts.push('trapping damage');
+            texts.push('구속 피해');
         }
         else {
             damage -= gen.num > 5 ? Math.floor(defender.maxHP() / 8) : Math.floor(defender.maxHP() / 16);
-            texts.push('trapping damage');
+            texts.push('구속 피해');
         }
     }
     if (defender.isSaltCure && !defender.hasAbility('Magic Guard')) {
         var isWaterOrSteel = defender.hasType('Water', 'Steel') ||
             (defender.teraType && ['Water', 'Steel'].includes(defender.teraType));
         damage -= Math.floor(defender.maxHP() / (isWaterOrSteel ? 4 : 8));
-        texts.push('Salt Cure');
+        texts.push('소금절이 피해');
     }
     if (!defender.hasType('Fire') && !defender.hasAbility('Magic Guard') &&
         (move.named('Fire Pledge (Grass Pledge Boosted)', 'Grass Pledge (Fire Pledge Boosted)'))) {
         damage -= Math.floor(defender.maxHP() / 8);
-        texts.push('Sea of Fire damage');
+        texts.push('불바다 피해');
     }
     if (!defender.hasAbility('Magic Guard') && !defender.hasType('Grass') &&
         (field.defenderSide.vinelash || move.named('G-Max Vine Lash'))) {
         damage -= Math.floor(defender.maxHP() / 6);
-        texts.push('Vine Lash damage');
+        texts.push('거다이편달 피해');
     }
     if (!defender.hasAbility('Magic Guard') && !defender.hasType('Fire') &&
         (field.defenderSide.wildfire || move.named('G-Max Wildfire'))) {
         damage -= Math.floor(defender.maxHP() / 6);
-        texts.push('Wildfire damage');
+        texts.push('거다이옥염 피해');
     }
     if (!defender.hasAbility('Magic Guard') && !defender.hasType('Water') &&
         (field.defenderSide.cannonade || move.named('G-Max Cannonade'))) {
         damage -= Math.floor(defender.maxHP() / 6);
-        texts.push('Cannonade damage');
+        texts.push('거다이포격 피해');
     }
     if (!defender.hasAbility('Magic Guard') && !defender.hasType('Rock') &&
         (field.defenderSide.volcalith || move.named('G-Max Volcalith'))) {
         damage -= Math.floor(defender.maxHP() / 6);
-        texts.push('Volcalith damage');
+        texts.push('거다이분석 피해');
     }
     return { damage: damage, texts: texts };
 }
@@ -821,14 +821,14 @@ function serializeText(arr) {
         return arr[0];
     }
     else if (arr.length === 2) {
-        return arr[0] + ' and ' + arr[1];
+        return arr[0] + ', ' + arr[1];
     }
     else {
         var text = '';
         for (var i = 0; i < arr.length - 1; i++) {
             text += arr[i] + ', ';
         }
-        return text + 'and ' + arr[arr.length - 1];
+        return text + ', ' + arr[arr.length - 1];
     }
 }
 function appendIfSet(str, toAppend) {
