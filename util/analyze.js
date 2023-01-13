@@ -68,7 +68,7 @@ const A = {
     analyzePoke: (text, isAttacker = true, attacker = null) => {
         const result = {
             name: "",
-            options: { level: 50, evs: {}, ability : '불면' },
+            options: { level: 50, evs: {}, ability : T.ability('꿀모으기') },
             move: { name: "", options: {} },
             field: {attackerSide: {}, defenderSide: {}},
             needNature: false,
