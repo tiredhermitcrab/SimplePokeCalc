@@ -22,6 +22,7 @@ const A = {
     isItem: (p) => (item_ko.indexOf(p) > -1 ? true : false),
     isAbility: (p) => (ability_ko.indexOf(p) > -1 ? true : false),
     isWeather: (p) => (T.weather(p) ? true : false),
+    isStatus : (p) => (T.status(p) ? true : false),
 
     analyze: (text) => {
         const result = {
@@ -83,6 +84,7 @@ const A = {
             if (A.isPokemon(token)) result.name = T.pokemon(token);
             if (A.isItem(token)) result.options.item = T.item(token);
             if (A.isNature(token)) result.options.nature = T.nature(token);
+            if (A.isStatus(token)) result.options.status = T.status(token);
             if (A.isAbility(token)) {
                 result.options.ability = T.ability(token);
                 result.options.abilityOn = true;
@@ -113,11 +115,14 @@ const A = {
             if (/^[\+\-]\d$/.test(token)) result.boost = token;
             if (token.slice(-2) == "테라")
                 result.options.teraType = T.type(token.slice(0, -2));
+            if (/^\d데스$/.test(token)) result.options.alliesFainted = Number(/\d/.exec(token));
             if (token == "급소") result.crit = true;
             if (/^[123456]껍질깨기$/.test(token)) {
                 if (isAttacker) result.boost = '+' + (2 * Number(token.slice(0,1)));
                 else result.boost = "-" + token.slice(0,1);
             }
+            if (token == '소금절이' && !isAttacker) result.options.isSaltCure = true;
+
             if (A.isMove(token)) result.move.name = T.move(token);
         });
 
@@ -243,8 +248,12 @@ const A = {
             field.attackerSide.isPowerSpot = true
             return true;
         }
-        if (token == '배터리' && isBattery) {
+        if (token == '배터리' && isAttacker) {
             field.attackerSide.isPowerSpot = true
+            return true;
+        }
+        if (token == '씨뿌리기' && isAttacker) {
+            field.attackerSide.isSeeded = true
             return true;
         }
         if (token == '방어' && !isAttacker) {
@@ -265,6 +274,18 @@ const A = {
         }
         if (token == '프렌드가드' && !isAttacker) {
             field.defenderSide.isFriendGuard = true
+            return true;
+        }
+        if (token == '씨뿌리기' && !isAttacker) {
+            field.defenderSide.isSeeded = true
+            return true;
+        }
+        if (token == '스텔스록' && !isAttacker) {
+            field.defenderSide.isSR = true
+            return true;
+        }
+        if (/^\d압정$/.test(token) && !isAttacker) {
+            field.defenderSide.spikes = Number(/\d/.exec(token))
             return true;
         }
         if (token == '매직룸') {
