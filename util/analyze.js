@@ -69,7 +69,12 @@ const A = {
     analyzePoke: (text, isAttacker = true, attacker = null) => {
         const result = {
             name: "",
-            options: { level: 50, evs: {}, ability : T.ability('꿀모으기') },
+            options: { 
+                level: 50, 
+                evs: {}, 
+                ability : T.ability('꿀모으기'), 
+                item : T.item('고운비늘') 
+            },
             move: { name: "", options: {} },
             field: {attackerSide: {}, defenderSide: {}},
             needNature: false,
@@ -122,6 +127,7 @@ const A = {
                 else result.boost = "-" + token.slice(0,1);
             }
             if (token == '소금절이' && !isAttacker) result.options.isSaltCure = true;
+            if (token == '노템') result.options.item = '';
 
             if (A.isMove(token)) result.move.name = T.move(token);
         });
