@@ -19,22 +19,28 @@
 </head>
 
 <body>
-    <div class="wrapAll">
-        <div class="title">
-            간단 포켓몬 계산기
+    <div class="rowWrap">
+        <div class="attackPokemonSave">
+            <div class="pokemon"></div>
         </div>
-        <div class="main">
-            <div class="input">
-                <fieldset class="wrapper">
-                    <legend>입력하기</legend>
-                    <input type="text" id="aaa" oninput="window.aaa()">
+        <div class="wrapResult">
+            <div class="title">
+                간단 포켓몬 계산기
+            </div>
+            <div class="main">
+                <div class="input">
+                    <fieldset class="wrapper">
+                        <legend>입력하기</legend>
+                        <input type="text" id="aaa" oninput="window.aaa()">
+                    </fieldset>
+                </div>
+                <fieldset class="result">
+                    <legend>계산 결과</legend>
+                    <label id="result">이곳에 결과가 표시됩니다.</label>
                 </fieldset>
             </div>
-            <fieldset class="result">
-                <legend>계산 결과</legend>
-                <label id="result">이곳에 결과가 표시됩니다.</label>
-            </fieldset>
         </div>
+        <div class="defensePokemonSave"></div>
     </div>
 </body>
 

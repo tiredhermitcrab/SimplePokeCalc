@@ -12,27 +12,44 @@ body {
     margin : 0;
 }
 
-div.wrapAll {
+div.rowWrap {
     display : flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     min-height: 100vh;
     min-width: 100vw;
 }
 
+div.attackPokemonSave, div.defensePokemonSave {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 200px;
+    min-height: 100vh;
+    border: 3px solid black;
+}
+
+div.wrapResult {
+    display : flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+    min-width: 350px;
+    min-height: 100vh;
+}
+
 .title {
-    margin-top : 15%;
+    margin-top : 10%;
+    margin-bottom : 10%;
     font-size : 54px;
     font-family: 'Nanum Pen Script', cursive;
 }
 
 .main {
-
-    width: 60vw;
-    min-width: 600px;
-    height: 30vh;
-    min-height: 300px;
-
+    width : 90%;
+    display: flex;
+    flex-direction: column;
 }
 
 .input {
@@ -59,7 +76,7 @@ fieldset.wrapper {
 }
 
 fieldset.result {
-    width:auto;
+    min-height: 200px;
     height: 70%;
     font-family: 'Nanum Gothic', sans-serif;
     border: 3px solid blue;
