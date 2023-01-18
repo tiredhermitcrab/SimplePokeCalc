@@ -75,31 +75,45 @@ window.aaa = function () {
     } else if (analyzed.iserr) {
         result = analyzed.errorText;
     } else {
-        const aP = new Pokemon(
-            gen,
-            analyzed.attacker.name,
-            analyzed.attacker.options
-        );
-        const dP = new Pokemon(
-            gen,
-            analyzed.defender.name,
-            analyzed.defender.options
-        );
-        const move = new Move(gen, analyzed.move.name, analyzed.move.options)
-        const field = new Field(analyzed.field)
-
-        aP.options = analyzed.attacker.options
-        dP.options = analyzed.defender.options
+        switch (analyzed.mode) {
+            case 'vs':
+                const aP = new Pokemon(
+                    gen,
+                    analyzed.attacker.name,
+                    analyzed.attacker.options
+                );
+                const dP = new Pokemon(
+                    gen,
+                    analyzed.defender.name,
+                    analyzed.defender.options
+                );
+                const move = new Move(gen, analyzed.move.name, analyzed.move.options)
+                const field = new Field(analyzed.field)
         
-        A.beforeCalc(gen, aP, dP, move, field, analyzed);
-
-
-        result = calculate(gen, aP, dP, move, field);
-
-        result = new cResult(result.gen, result.attacker, result.defender, result.move, result.field, result.damage, result.rawDesc, analyzed)
+                aP.options = analyzed.attacker.options
+                dP.options = analyzed.defender.options
         
-        console.log(result.attacker ? JSON.stringify(result.attacker) : "");
-        console.log(result.defender ? JSON.stringify(result.defender) : "");
+                A.beforeCalc(gen, aP, dP, move, field, analyzed);
+        
+                result = calculate(gen, aP, dP, move, field);
+        
+                result = new cResult(result.gen, result.attacker, result.defender, result.move, result.field, result.damage, result.rawDesc, analyzed)
+                
+                console.log(result.attacker ? JSON.stringify(result.attacker) : "");
+                console.log(result.defender ? JSON.stringify(result.defender) : "");
+                break;
+            case 'firepower':
+
+                result = '결정력 : ' + Math.floor(analyzed.firepower);
+
+                break;
+            case 'durability':
+
+                result = '물리내구 : ' + Math.floor(analyzed.physicalDurability) + '<br>' + '특수내구 : ' + Math.floor(analyzed.specialDurability);
+
+                break;
+        }
+
         
         
     }

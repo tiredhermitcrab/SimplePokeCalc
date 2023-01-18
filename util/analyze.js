@@ -26,6 +26,7 @@ const A = {
 
     analyze: (text) => {
         const result = {
+            mode: '',
             iserr: false,
             errorText: "",
             attacker: { name: "", options: {} },
@@ -40,10 +41,21 @@ const A = {
 
         result.attacker = A.analyzePoke(pokemons[0].trim());
 
-        if (result.attacker && pokemons.length > 1)
+        if (pokemons.length > 1)
             result.defender = A.analyzePoke(pokemons[1].trim(), false, result.attacker);
         else result.defender = null;
 
+        if (result.attacker && !result.defender && result.attacker.move) {
+            result.mode = 'firepower';
+            result.move = result.attacker.move
+            A.calcFirepower(result);
+            return result;
+        }
+        if (result.defender && !result.attacker) {
+            result.mode = 'durability';
+            A.calcDurability(result);
+            return result;
+        }
         if (!result.attacker) {
             result.iserr = true;
             result.errorText += "공격 포켓몬 존재하지 않음";
@@ -54,6 +66,8 @@ const A = {
             result.errorText += "수비 포켓몬 존재하지 않음";
             return result;
         }
+
+        result.mode = 'vs'
         result.move = result.attacker.move;
         result.crit = result.attacker.crit || result.defender.crit;
 
@@ -75,9 +89,9 @@ const A = {
                 ability : T.ability('꿀모으기'), 
                 item : T.item('고운비늘') 
             },
-            move: { name: "", options: {} },
+            move: { name: "", options: {}, bp:0 },
             field: {attackerSide: {}, defenderSide: {}},
-            needNature: false,
+            needNature: null,
             crit: false,
             boost : '',
             itemName : false,
@@ -128,10 +142,9 @@ const A = {
             }
             if (token == '소금절이' && !isAttacker) result.options.isSaltCure = true;
             if (token == '노템') result.options.item = '';
-
+            
             if (A.isMove(token)) result.move.name = T.move(token);
         });
-
 
         if (!result.name) return null;
         var move = {};
@@ -155,8 +168,10 @@ const A = {
             } else {
                 if (isAttacker) result.options.nature = T.nature('조심')
                 else if (result.needNature.spd) result.options.nature = T.nature('신중')
+                else if (result.needNature.def) result.options.nature = T.nature('장난꾸러기')
             }
-        }
+        } 
+        if (!attacker) return result;
         const rPokemon = isAttacker ? new Pokemon(gen, result.name, result.options) : new Pokemon(gen, attacker.name, attacker.options)
 
         if (result.move.name == "Tera Blast" && result.needNature) {
@@ -199,12 +214,12 @@ const A = {
 
     beforeCalc: (gen, aP, dP, move, field, analyzed) => {
 
-        if(analyzed.attacker.boost) {
+        if(analyzed.attacker && analyzed.attacker.boost) {
             aP.boosts.atk = Number(analyzed.attacker.boost)
             aP.boosts.spa = Number(analyzed.attacker.boost)
             if (move.name == T.move('바디프레스')) aP.boosts.def = Number(analyzed.attacker.boost)
         }
-        if(analyzed.defender.boost) {
+        if(analyzed.defender && analyzed.defender.boost) {
             dP.boosts.def = Number(analyzed.defender.boost)
             dP.boosts.spd = Number(analyzed.defender.boost)
         }
@@ -242,6 +257,7 @@ const A = {
         if (aP.hasAbility(T.ability('스킬링크'))) move.hits = 5;
 
         if (analyzed.crit) move.isCrit = true;
+
     },
 
     fieldAnalyze : (token, field, isAttacker) => {
@@ -315,7 +331,43 @@ const A = {
             return true;
         }
         return false;
-    }
+    },
+
+    calcFirepower : (result) => {
+        const aP = new Pokemon(Generations.get(9), result.attacker.name, result.attacker.options)
+        const dP = new Pokemon(Generations.get(9), 'Lumineon', {level:50,ivs:{spd:18}, evs:{def:28}})
+        const move = new Move(Generations.get(9), result.move.name, result.move.options)
+        const field = new Field(result.field)
+
+        A.beforeCalc(Generations.get(9), aP, dP, move, field, result);
+
+        var damage = calculate(Generations.get(9), aP, dP, move, field).range()[1];
+
+        switch (T.type(move.type)) {
+            case '풀':
+            case '전기':
+                damage /= 2;
+                break;
+            case '강철':
+            case '물':
+            case '불꽃':
+            case '얼음':
+                damage *= 2;
+                break;
+        }
+
+        result.firepower = damage * 100 * 50 / 22;
+    },
+
+    calcDurability : (result) => {
+        const dP = new Pokemon(Generations.get(9), result.defender.name, result.defender.options)
+        const boost = eval('(2'+result.defender.boost+')/2')
+
+        console.log(JSON.stringify(dP))
+        console.log(boost)
+        result.physicalDurability = dP.stats.hp * dP.stats.def * boost / 0.411;
+        result.specialDurability = dP.stats.hp * dP.stats.spd * boost / 0.411;
+    },
 };
 
 window.A = A;
