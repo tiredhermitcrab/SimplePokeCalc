@@ -45,6 +45,9 @@ const A = {
             result.defender = A.analyzePoke(pokemons[1].trim(), false, result.attacker);
         else result.defender = null;
 
+        if (result.attacker && result.attacker.field) result.field = result.attacker.field
+        if (result.defender && result.defender.field) result.field = merge(result.field, result.defender.field)
+
         if (result.attacker && !result.defender && result.attacker.move) {
             result.mode = 'firepower';
             result.move = result.attacker.move
@@ -71,10 +74,6 @@ const A = {
         result.move = result.attacker.move;
         result.crit = result.attacker.crit || result.defender.crit;
 
-        result.field = merge(
-            result.attacker.field,
-            result.defender.field
-        );
 
 
         return result;
@@ -99,6 +98,7 @@ const A = {
         if (!text) return null;
         const tokens = text.split(" ").map(t => A.chkAlias(t)).join(' ').split(' ');
         tokens.forEach((token) => {
+            if (!token) return;
             if (A.fieldAnalyze(token, result.field, isAttacker)) return;
             if (A.isPokemon(token)) result.name = T.pokemon(token);
             if (A.isItem(token)) result.options.item = T.item(token);
