@@ -16,13 +16,13 @@ window.main = {
             "풀보정 안경 애널라이즈 전기테라 자포코일 10만볼트",
             "c252 생구 사이코필드 카디나르마 분산 와이드포스",
             "풀보정 재앙의구슬 안경 위유이 불대문자",
-            "+2 c252+ 생구 타부자고 골드러시",
+            "1음모 c252+ 생구 타부자고 골드러시",
             "악테라 풀보정 구애안경 삼삼드래 악의파동",
             "+6 라우드본 플레어송"
         ]
 
         const def = [
-            '풀보정 크레베이스',
+            '풀보정 2철벽 크레베이스',
             'h252 b252+ d4 천진 라우드본',
             '+2 h252 b252+ d4 독테라 정화의소금 콜로솔트',
             'h4 마스카나',
@@ -30,7 +30,7 @@ window.main = {
             'h252 b4 d252+ 저수 토오',
             'h252 b148 d108 모래날림 하마돈',
             'h252 d4 돌조 모래날림 마기라스',
-            'h252 돌조 드닐레이브',
+            'h252 돌조 리플렉터 드닐레이브',
             'h252 d252+ 해피너스',
             'h4 드래펄트',
             'h252 부유 워시로토무'
@@ -63,6 +63,17 @@ window.onload = () => {
             $input.style.color = '#999'
         }
     })
+    
+    HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
+    const needTooltips = document.getElementsByClassName('needTooltip');
+
+    for (var i=0;i<needTooltips.length;i++) {
+        needTooltips[i].addEventListener('mouseout', hideAllTooltip);
+        needTooltips[i].addEventListener('mouseover', showTooltip);
+        needTooltips[i].addEventListener('click', showTooltip);
+    }
+
 }
 
 window.aaa = function () {
@@ -123,3 +134,20 @@ window.aaa = function () {
         : result;
 
 };
+
+window.showTooltip = (e) => {
+    let id = e.target.id
+    setTimeout(function(){
+        document.getElementById(id).style.visibility = 'visible'
+        var x = e.pageX + 250 < window.innerWidth ? e.pageX : window.innerWidth - 250;
+        document.getElementById(id).style.left = x + 'px';
+        document.getElementById(id).style.top = e.pageY + 'px';
+    }, 1);
+}
+
+window.hideAllTooltip = () => {
+    document.getElementsByClassName('tooltip').forEach(element => {
+        element.style.visibility = 'hidden';
+    });
+}
+

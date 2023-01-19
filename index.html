@@ -18,29 +18,61 @@
     <title>간단 포켓몬 계산기</title>
 </head>
 
-<body>
-    <div class="rowWrap">
-        <div class="attackPokemonSave">
-            <div class="pokemon"></div>
+<body onclick="hideAllTooltip();">
+    <div class="content">
+        <div class="tooltip" id="differentResult">타 계산기의 경우 스탯x위력으로 계산하지만, 여기서는 최종 데미지 최대값을 기준으로 함 (2~3% 차이)</div>
+        <div class="tooltip" id="rankUp">+ 또는 - 뒤에 숫자(1~6) ex) +2</div>
+        <div class="tooltip" id="evs">
+            한글로 체, 공, 방, 특공, 특방, 스 또는 영어로 habcds 뒤에 원하는 노력치, 성격 보정을 원하면 뒤에 +나 -를 붙이면 됩니다.<br>
+            ex) a252+<br>
+            "풀보정"을 입력하면 공격시에는 기술의 물리/특수에 따라 해당하는 스탯을, 방어시에는 체력과 기술에 해당하는 스탯 노력치 252에 성격보정을 맞춥니다.
         </div>
-        <div class="wrapResult">
-            <div class="title">
-                간단 포켓몬 계산기
-            </div>
-            <div class="main">
-                <div class="input">
+        <div class='tooltip' id='weather'>날씨를 까는 특성 입력 가능(가뭄 등)</div>
+        <div class='tooltip' id='etc'>
+            도우미, 벽, 파워스폿 등<br>
+            테라스탈의 경우 '(타입명)테라' ex) 풀테라
+            '분산' 또는 '더블' 입력시 더블배틀 중 광역기로 취급합니다.<br>
+            함정(압정, 스텔스록 등) 입력시 해당하는 피해를 이미 입은 것으로 계산합니다.
+        </div>
+        <div class="tooltip" id="alias">
+            포켓몬 이름 : 한카, 드펄, 타부, 삼삼 등<br>
+            아이템 이름 : 안경(구애안경), 먹밥, 돌조, 생구 등<br>
+            기술 이름 : 하펌, 볼체, 인파, 화방 등<br>
+            특성 이름 : 멀스, 타불 등 <br>
+            랭크업 기술 + 횟수로 입력 가능 ex) 2칼춤 = +4 
+        </div>
+        <div class="rowWrap">
+            <div class="wrapResult">
+                <div class="title">
+                    간단 포켓몬 계산기
+                </div>
+                <div class="main">
                     <fieldset class="wrapper">
                         <legend>입력하기</legend>
                         <input type="text" id="aaa" oninput="window.aaa()">
                     </fieldset>
+                    <fieldset class="result">
+                        <legend>계산 결과</legend>
+                        <label id="result">이곳에 결과가 표시됩니다.</label>
+                    </fieldset>
                 </div>
-                <fieldset class="result">
-                    <legend>계산 결과</legend>
-                    <label id="result">이곳에 결과가 표시됩니다.</label>
-                </fieldset>
+                <div class="explain">
+                    포켓몬 쇼다운 계산기(<a href='https://calc.pokemonshowdown.com/' target="_blank">https://calc.pokemonshowdown.com/</a>) 기반으로 제작되었습니다.<br><br>
+                    <b>포켓몬 정보 입력법 : </b>포켓몬 이름(필수), 아이템, 
+                    <span class='needTooltip' id='rankUp'>랭크업</span> ,
+                    <span class='needTooltip' id='evs'>성격, 노력치</span>, 특성, 
+                    <span class='needTooltip' id='weather'>날씨</span>, 필드, 
+                    <span class='needTooltip' id='etc'>기타 사항 등</span>을 띄어쓰기로 구분하여 한줄로 입력하면 됩니다. <br>
+                    <span class='needTooltip' id='alias'>일부 줄임말</span> 또한 사용 가능합니다.<br>
+                    <b>데미지 계산</b> : 공격 포켓몬 정보와 기술 입력 후, (vs, =>, ->) 중 하나를 입력한 뒤 방어 포켓몬 정보를 입력합니다.<br>
+                    예시) +2 a252 한카리아스 지진 vs h252 b252+ 콜로솔트<br>
+                    <b>결정력 계산</b> : 공격 포켓몬 정보와 기술을 입력합니다. <span class='needTooltip' id="differentResult">(타 계산기와 다른 결과 출력될 수 있음)</span><br>
+                    예시) 악테라 풀보정 구애안경 삼삼드래 악의파동<br>
+                    <b>내구력 계산</b> : vs를 입력한 뒤, 방어 포켓몬 정보와 기술을 입력합니다.(아이템 등 일부 기능 지원 안 됨, 추가중)<br>
+                    예시) vs h4 b252+ d252 진화의휘석 럭키<br>
+                </div>
             </div>
         </div>
-        <div class="defensePokemonSave"></div>
     </div>
 </body>
 
