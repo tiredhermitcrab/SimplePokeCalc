@@ -355,6 +355,7 @@ const A = {
                 damage *= 2;
                 break;
         }
+        if (move.name == 'Freeze-Dry') damage /= 4;
 
         result.firepower = damage * 100 * 50 / 22;
     },
