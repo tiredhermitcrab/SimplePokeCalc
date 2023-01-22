@@ -364,10 +364,19 @@ const A = {
         const dP = new Pokemon(Generations.get(9), result.defender.name, result.defender.options)
         const boost = eval('(2'+result.defender.boost+')/2')
 
-        console.log(JSON.stringify(dP))
-        console.log(boost)
-        result.physicalDurability = dP.stats.hp * dP.stats.def * boost / 0.411;
-        result.specialDurability = dP.stats.hp * dP.stats.spd * boost / 0.411;
+        let physRatio = 1;
+        let speRatio = 1;
+
+        if (dP.hasItem(T.item('진화의휘석'))) {
+            physRatio *= 1.5;
+            speRatio *= 1.5;
+        }
+        if (dP.hasItem(T.item('돌격조끼'))) speRatio *= 1.5;
+        if (dP.hasType(T.type('바위')) && result.field.weather == T.weather('모래바람')) speRatio *= 1.5;
+        if (dP.hasType(T.type('얼음')) && result.field.weather == T.weather('설경')) physRatio *= 1.5;
+
+        result.physicalDurability = dP.stats.hp * dP.stats.def * boost / 0.411 * physRatio;
+        result.specialDurability = dP.stats.hp * dP.stats.spd * boost / 0.411 * speRatio;
     },
 };
 
